@@ -7,7 +7,7 @@ def active_contour_loss(y_true, y_pred):
   '''
   # length term
   delta_r = y_pred[:,:,1:,:] - y_pred[:,:,:-1,:] # horizontal gradient (B, C, H-1, W) 
-  delta_c = y_pred[:,:,:,1:] - y_pred[:,:,:,:-1] # vertical gradient   (B, C, H,   W)
+  delta_c = y_pred[:,:,:,1:] - y_pred[:,:,:,:-1] # vertical gradient   (B, C, H,   W-1)
   
   delta_r    = delta_r[:,:,1:,:-2]**2  # (B, C, H-2, W-2)
   delta_c    = delta_c[:,:,:-2,1:]**2  # (B, C, H-2, W-2)
