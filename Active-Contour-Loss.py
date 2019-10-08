@@ -28,4 +28,4 @@ def active_contour_loss(y_true, y_pred):
   lambdaP = 1 # lambda parameter could be various.
   loss =  lenth + lambdaP * (region_in + region_out) 
 
-   return loss
+  return loss
