@@ -21,7 +21,6 @@ def active_contour_loss(y_true, y_pred):
   c_in  = torch.ones_like(y_pred)
   c_out = torch.zeros_like(y_pred)
 
-  # TODO why selecting only axis 0
   region_in  = torch.abs(torch.sum( y_pred     * ((y_true - C_in )**2) )) # equ.(12) in the paper
   region_out = torch.abs(torch.sum( (1-y_pred) * ((y_true - C_out)**2) )) # equ.(12) in the paper
 
