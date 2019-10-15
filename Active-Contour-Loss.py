@@ -1,9 +1,10 @@
 
 import torch
 
-def active_contour_loss(y_true, y_pred):
+def active_contour_loss(y_true, y_pred, weight=10):
   '''
-  y_true, y_pred: (B, C, H, W)
+  y_true, y_pred: tensor of shape (B, C, H, W)
+  weight: scalar, length term weight.
   '''
   # length term
   delta_r = y_pred[:,:,1:,:] - y_pred[:,:,:-1,:] # horizontal gradient (B, C, H-1, W) 
@@ -13,18 +14,17 @@ def active_contour_loss(y_true, y_pred):
   delta_c    = delta_c[:,:,:-2,1:]**2  # (B, C, H-2, W-2)
   delta_pred = torch.abs(delta_r + delta_c) 
 
-  epsilon = 0.00000001 # where is a parameter to avoid square root is zero in practice.
-  w = 1  # weight?
-  lenth = w * torch.sum(torch.sqrt(delta_pred + epsilon)) # eq.(11) in the paper
+  epsilon = 1e-8 # where is a parameter to avoid square root is zero in practice.
+  lenth = torch.mean(torch.sqrt(delta_pred + epsilon)) # eq.(11) in the paper, mean is used instead of sum.
   
   # region term
   c_in  = torch.ones_like(y_pred)
   c_out = torch.zeros_like(y_pred)
 
-  region_in  = torch.abs(torch.sum( y_pred     * ((y_true - C_in )**2) )) # equ.(12) in the paper
-  region_out = torch.abs(torch.sum( (1-y_pred) * ((y_true - C_out)**2) )) # equ.(12) in the paper
-
-  lambdaP = 1 # lambda parameter could be various.
-  loss =  lenth + lambdaP * (region_in + region_out) 
+  region_in  = torch.mean( y_pred     * (y_true - C_in )**2 ) # equ.(12) in the paper, mean is used instead of sum.
+  region_out = torch.mean( (1-y_pred) * (y_true - C_out)**2 ) 
+  region = region_in + region_out
+  
+  loss =  weight*lenth + region
 
   return loss
