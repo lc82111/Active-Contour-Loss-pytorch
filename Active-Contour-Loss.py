@@ -3,7 +3,7 @@ import torch
 
 def active_contour_loss(y_true, y_pred, weight=10):
   '''
-  y_true, y_pred: tensor of shape (B, C, H, W)
+  y_true, y_pred: tensor of shape (B, C, H, W), where y_true[:,:,region_in_contour] == 1, y_true[:,:,region_out_contour] == 0.
   weight: scalar, length term weight.
   '''
   # length term
